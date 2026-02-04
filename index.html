@@ -19,29 +19,38 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* RESET: Default html/body styles */
-        html, body {
+        /* RESET & BASICS */
+        html {
+            /* Fix for top notch/status bar area showing white on overscroll */
+            background-color: #e0f2fe;
+            overflow-x: hidden;
+        }
+
+        body {
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
+            /* IMPORTANT: Removed height: 100% to allow proper scrolling */
+            min-height: 100vh; 
             overflow-x: hidden;
-            /* Ensure transparent so the fixed background shows through */
-            background-color: transparent; 
+            /* Fix for bottom overscroll area */
+            background-color: #fce7f3; 
         }
 
         /* FIX: Fixed Background Element
-           This creates a dedicated layer for the gradient that stays locked to the viewport.
-           It solves the "choppy/repeating" issue on mobile scroll and covers the notch/bounce areas. */
+           1. height: 100vh covers the visual viewport
+           2. -webkit-fill-available ensures it respects iOS address bar dynamics
+        */
         .fixed-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100vh; /* Viewport height */
+            height: 100vh; 
+            height: -webkit-fill-available; 
             background: linear-gradient(180deg, #e0f2fe 0%, #dcfce7 40%, #fce7f3 100%);
-            z-index: -50; /* Send to very back */
-            will-change: transform; /* Hint for mobile performance */
+            z-index: -50; 
+            will-change: transform;
         }
 
         /* Hide scrollbar for cleaner look */
@@ -56,6 +65,7 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 50;
+            pointer-events: none; /* Let clicks pass through bunny so you can scroll */
             will-change: transform;
         }
 
@@ -75,7 +85,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 0; /* Behind content, in front of bg */
+            z-index: 0; 
         }
 
         .cloud {
@@ -94,11 +104,10 @@
             backdrop-filter: blur(5px);
             border-radius: 20px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            position: relative; /* Ensure card sits on top of path */
+            position: relative; 
             z-index: 10;
         }
 
-        /* Photo Placeholder Styles */
         .photo-frame {
             width: 100%;
             height: 250px;
@@ -119,7 +128,6 @@
             object-fit: cover;
         }
 
-        /* The hidden heart popup */
         #proposal-popup {
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform: scale(0);
@@ -135,7 +143,6 @@
             animation: pulse 2s infinite;
         }
 
-        /* Winding Path Styles */
         .path-container {
             position: absolute;
             top: 0;
@@ -143,7 +150,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: -1; /* Behind the content */
+            z-index: -1; 
             overflow: hidden;
         }
     </style>
@@ -330,21 +337,28 @@
         // 1. REGISTER GSAP
         gsap.registerPlugin(ScrollTrigger);
 
-        // 2. ANIMATE SECTIONS ON SCROLL
-        // This grabs all elements with class 'fade-in-up' and animates them
-        gsap.utils.toArray('.fade-in-up').forEach((elem) => {
-            gsap.from(elem, {
-                scrollTrigger: {
-                    trigger: elem,
-                    start: "top 80%", // When top of element hits 80% down viewport
-                    end: "bottom 20%",
-                    toggleActions: "play none none reverse"
-                },
-                y: 50,
-                opacity: 0,
-                duration: 1,
-                ease: "power2.out"
+        // Wait for DOM to be ready
+        window.addEventListener("load", () => {
+            
+            // 2. ANIMATE SECTIONS ON SCROLL
+            // This grabs all elements with class 'fade-in-up' and animates them
+            gsap.utils.toArray('.fade-in-up').forEach((elem) => {
+                gsap.from(elem, {
+                    scrollTrigger: {
+                        trigger: elem,
+                        start: "top 85%", // Trigger a bit earlier (85% down instead of 80%)
+                        end: "bottom 20%",
+                        toggleActions: "play none none reverse"
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 1,
+                    ease: "power2.out"
+                });
             });
+
+            // Refresh ScrollTrigger to ensure mobile height is calculated correctly
+            ScrollTrigger.refresh();
         });
 
         // 3. FINAL INTERACTION
