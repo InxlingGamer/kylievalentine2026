@@ -297,11 +297,12 @@
         <div class="h-screen flex flex-col items-center justify-center px-6 section relative">
             
             <!-- The "House" / Goal -->
-            <div id="mailbox-trigger" class="cursor-pointer transform transition-transform hover:scale-105 active:scale-95 mb-8 fade-in-up">
+            <div id="mailbox-trigger" class="cursor-pointer transform transition-transform hover:scale-105 active:scale-95 mb-8 fade-in-up w-full">
                 <!-- Replaced SVG with your image -->
-                <img src="bunnyhearthouse.png" alt="Bunny Heart House" class="w-40 h-auto mx-auto drop-shadow-2xl">
+                <!-- CHANGED: w-40 to w-full max-w-md to make it HUGE -->
+                <img src="bunnyhearthouse.png" alt="Bunny Heart House" class="w-full max-w-md h-auto mx-auto drop-shadow-2xl">
                 
-                <div class="text-center mt-4 bg-white px-4 py-2 rounded-full shadow-lg tap-hint">
+                <div class="text-center mt-4 bg-white px-4 py-2 rounded-full shadow-lg tap-hint w-max mx-auto">
                     <span class="text-pink-500 font-bold">Tap the House!</span>
                 </div>
             </div>
