@@ -128,13 +128,14 @@
             object-fit: cover;
         }
 
-        #proposal-popup {
+        /* The hidden heart popup */
+        #proposal-popup, #countdown-popup {
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform: scale(0);
             opacity: 0;
         }
         
-        #proposal-popup.active {
+        #proposal-popup.active, #countdown-popup.active {
             transform: scale(1);
             opacity: 1;
         }
@@ -152,6 +153,13 @@
             pointer-events: none;
             z-index: -1; 
             overflow: hidden;
+        }
+        
+        .timer-box {
+            background: #fce7f3;
+            border-radius: 12px;
+            padding: 10px;
+            width: 70px;
         }
     </style>
 </head>
@@ -205,7 +213,8 @@
     </div>
 
     <!-- MAIN SCROLL CONTENT -->
-    <main class="relative z-10 pb-96"> <!-- Large padding bottom to allow scrolling past bunny -->
+    <!-- Changed pb-96 to pb-10 to reduce bottom scroll space -->
+    <main class="relative z-10 pb-10">
         
         <!-- WINDING DIRT PATH SVG -->
         <div class="path-container">
@@ -288,26 +297,19 @@
         <div class="h-screen flex flex-col items-center justify-center px-6 section relative">
             
             <!-- The "House" / Goal -->
-            <div id="mailbox-trigger" class="cursor-pointer transform transition-transform hover:scale-105 active:scale-95 mb-32 fade-in-up">
-                <svg width="150" height="150" viewBox="0 0 100 100">
-                    <!-- Carrot House Shape -->
-                    <path d="M20 80 L50 20 L80 80 Z" fill="#fb923c" stroke="#c2410c" stroke-width="2"/>
-                    <rect x="40" y="60" width="20" height="20" fill="#7c2d12" rx="2"/> <!-- Door -->
-                    <circle cx="50" cy="40" r="8" fill="#fef3c7"/> <!-- Window -->
-                    <!-- Green top -->
-                    <path d="M45 20 Q40 5 30 10" fill="none" stroke="#16a34a" stroke-width="3"/>
-                    <path d="M50 20 Q50 0 50 10" fill="none" stroke="#16a34a" stroke-width="3"/>
-                    <path d="M55 20 Q60 5 70 10" fill="none" stroke="#16a34a" stroke-width="3"/>
-                </svg>
+            <div id="mailbox-trigger" class="cursor-pointer transform transition-transform hover:scale-105 active:scale-95 mb-8 fade-in-up">
+                <!-- Replaced SVG with your image -->
+                <img src="bunnyhearthouse.png" alt="Bunny Heart House" class="w-40 h-auto mx-auto drop-shadow-2xl">
+                
                 <div class="text-center mt-4 bg-white px-4 py-2 rounded-full shadow-lg tap-hint">
-                    <span class="text-pink-500 font-bold">Tap the Carrot House!</span>
+                    <span class="text-pink-500 font-bold">Tap the House!</span>
                 </div>
             </div>
 
         </div>
     </main>
 
-    <!-- PROPOSAL POPUP OVERLAY -->
+    <!-- 1. PROPOSAL POPUP OVERLAY -->
     <div id="proposal-popup" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center px-6 pointer-events-none">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl pointer-events-auto relative overflow-hidden">
             <!-- Decorative background hearts -->
@@ -333,6 +335,42 @@
         </div>
     </div>
 
+    <!-- 2. COUNTDOWN POPUP OVERLAY (Hidden initially) -->
+    <div id="countdown-popup" class="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center px-6 pointer-events-none">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl pointer-events-auto relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-300 to-blue-400"></div>
+            
+            <h2 class="text-2xl font-black text-pink-600 mb-2">See you soon! 🐰</h2>
+            <p class="text-gray-600 mb-6 text-md">
+                Counting down the seconds until our date...
+            </p>
+            
+            <!-- Timer Grid -->
+            <div class="flex justify-center gap-2 mb-6">
+                <div class="timer-box">
+                    <div id="d-val" class="text-2xl font-bold text-gray-800">0</div>
+                    <div class="text-xs text-gray-500 uppercase">Days</div>
+                </div>
+                <div class="timer-box">
+                    <div id="h-val" class="text-2xl font-bold text-gray-800">0</div>
+                    <div class="text-xs text-gray-500 uppercase">Hours</div>
+                </div>
+                <div class="timer-box">
+                    <div id="m-val" class="text-2xl font-bold text-gray-800">0</div>
+                    <div class="text-xs text-gray-500 uppercase">Mins</div>
+                </div>
+                <div class="timer-box">
+                    <div id="s-val" class="text-2xl font-bold text-gray-800">0</div>
+                    <div class="text-xs text-gray-500 uppercase">Secs</div>
+                </div>
+            </div>
+
+            <div class="text-pink-400 text-sm font-bold">
+                Feb 14th ❤️
+            </div>
+        </div>
+    </div>
+
     <script>
         // 1. REGISTER GSAP
         gsap.registerPlugin(ScrollTrigger);
@@ -341,12 +379,11 @@
         window.addEventListener("load", () => {
             
             // 2. ANIMATE SECTIONS ON SCROLL
-            // This grabs all elements with class 'fade-in-up' and animates them
             gsap.utils.toArray('.fade-in-up').forEach((elem) => {
                 gsap.from(elem, {
                     scrollTrigger: {
                         trigger: elem,
-                        start: "top 85%", // Trigger a bit earlier (85% down instead of 80%)
+                        start: "top 85%", 
                         end: "bottom 20%",
                         toggleActions: "play none none reverse"
                     },
@@ -357,21 +394,21 @@
                 });
             });
 
-            // Refresh ScrollTrigger to ensure mobile height is calculated correctly
             ScrollTrigger.refresh();
         });
 
         // 3. FINAL INTERACTION
         const mailbox = document.getElementById('mailbox-trigger');
-        const popup = document.getElementById('proposal-popup');
+        const proposalPopup = document.getElementById('proposal-popup');
+        const countdownPopup = document.getElementById('countdown-popup');
         const bunnyContainer = document.querySelector('.bunny-container');
 
         mailbox.addEventListener('click', () => {
             // Hide the bunny to focus on popup
             gsap.to(bunnyContainer, { opacity: 0, duration: 0.5 });
             
-            // Show popup
-            popup.classList.add('active');
+            // Show proposal popup
+            proposalPopup.classList.add('active');
             
             // First burst of small confetti
             confetti({
@@ -384,8 +421,6 @@
 
         // 4. ACCEPT PROPOSAL FUNCTION
         function acceptProposal() {
-            // Close popup logic could go here, but let's just blast confetti
-            
             // Massive confetti explosion
             const duration = 15 * 1000;
             const animationEnd = Date.now() + duration;
@@ -397,14 +432,8 @@
 
             const interval = setInterval(function() {
                 const timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
+                if (timeLeft <= 0) return clearInterval(interval);
                 const particleCount = 50 * (timeLeft / duration);
-                
-                // Since particles fall down, start a bit higher than random
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
                 confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
             }, 250);
@@ -414,6 +443,50 @@
             btns[0].textContent = "YAY!!! I LOVE YOU! ❤️";
             btns[0].classList.replace('bg-pink-500', 'bg-green-500');
             btns[1].style.display = 'none';
+
+            // 5. SWITCH TO COUNTDOWN AFTER 3 SECONDS
+            setTimeout(() => {
+                // Fade out proposal
+                proposalPopup.classList.remove('active');
+                
+                // Wait small moment, fade in countdown
+                setTimeout(() => {
+                    startCountdown();
+                    countdownPopup.classList.add('active');
+                    // More confetti because why not
+                    confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
+                }, 500);
+            }, 3000);
+        }
+
+        // 6. COUNTDOWN LOGIC
+        function startCountdown() {
+            function updateTimer() {
+                const now = new Date();
+                let year = now.getFullYear();
+                // Month is 0-indexed (0 = Jan, 1 = Feb)
+                let valentine = new Date(year, 1, 14, 0, 0, 0); 
+
+                // If Feb 14 has passed this year, count to next year
+                if (now > valentine) {
+                    valentine = new Date(year + 1, 1, 14, 0, 0, 0);
+                }
+
+                const diff = valentine - now;
+
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('d-val').innerText = d;
+                document.getElementById('h-val').innerText = h;
+                document.getElementById('m-val').innerText = m;
+                document.getElementById('s-val').innerText = s;
+            }
+
+            updateTimer(); // run immediately
+            setInterval(updateTimer, 1000); // run every second
         }
     </script>
 </body>
