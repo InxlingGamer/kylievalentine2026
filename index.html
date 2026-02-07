@@ -299,8 +299,8 @@
             <!-- The "House" / Goal -->
             <div id="mailbox-trigger" class="cursor-pointer transform transition-transform hover:scale-105 active:scale-95 mb-8 fade-in-up w-full">
                 <!-- Replaced SVG with your image -->
-                <!-- CHANGED: w-40 to w-full max-w-md to make it HUGE -->
-                <img src="bunnyhearthouse.png" alt="Bunny Heart House" class="w-full max-w-md h-auto mx-auto drop-shadow-2xl">
+                <!-- REMOVED max-w constraints and added min-w to force size -->
+                <img src="bunnyhearthouse.png" alt="Bunny Heart House" class="w-full h-auto mx-auto drop-shadow-2xl min-w-[300px]">
                 
                 <div class="text-center mt-4 bg-white px-4 py-2 rounded-full shadow-lg tap-hint w-max mx-auto">
                     <span class="text-pink-500 font-bold">Tap the House!</span>
