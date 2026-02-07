@@ -15,8 +15,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
-    <!-- 4. Confetti for the finale -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- 4. Confetti for the finale (Updated to 1.9.2 for better shape support) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <style>
         /* RESET & BASICS */
@@ -379,6 +379,11 @@
         // Wait for DOM to be ready
         window.addEventListener("load", () => {
             
+            // Define Heart Shape for Confetti
+            var heart = confetti.shapeFromPath({
+                path: 'M167 72c19,-38 37,-56 75,-56 42,0 76,33 76,75 0,76 -76,151 -151,227 -76,-76 -151,-151 -151,-227 0,-42 33,-75 75,-75 38,0 57,18 76,56z'
+            });
+
             // 2. ANIMATE SECTIONS ON SCROLL
             gsap.utils.toArray('.fade-in-up').forEach((elem) => {
                 gsap.from(elem, {
@@ -396,69 +401,87 @@
             });
 
             ScrollTrigger.refresh();
-        });
 
-        // 3. FINAL INTERACTION
-        const mailbox = document.getElementById('mailbox-trigger');
-        const proposalPopup = document.getElementById('proposal-popup');
-        const countdownPopup = document.getElementById('countdown-popup');
-        const bunnyContainer = document.querySelector('.bunny-container');
+            // 3. FINAL INTERACTION
+            const mailbox = document.getElementById('mailbox-trigger');
+            const proposalPopup = document.getElementById('proposal-popup');
+            const countdownPopup = document.getElementById('countdown-popup');
+            const bunnyContainer = document.querySelector('.bunny-container');
 
-        mailbox.addEventListener('click', () => {
-            // Hide the bunny to focus on popup
-            gsap.to(bunnyContainer, { opacity: 0, duration: 0.5 });
-            
-            // Show proposal popup
-            proposalPopup.classList.add('active');
-            
-            // First burst of small confetti
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#f472b6', '#db2777', '#fce7f3'] // Pink theme
-            });
-        });
-
-        // 4. ACCEPT PROPOSAL FUNCTION
-        function acceptProposal() {
-            // Massive confetti explosion
-            const duration = 15 * 1000;
-            const animationEnd = Date.now() + duration;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 200 };
-
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
-
-            const interval = setInterval(function() {
-                const timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) return clearInterval(interval);
-                const particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-
-            // Change button text
-            const btns = document.querySelectorAll('button');
-            btns[0].textContent = "YAY!!! I LOVE YOU! ❤️";
-            btns[0].classList.replace('bg-pink-500', 'bg-green-500');
-            btns[1].style.display = 'none';
-
-            // 5. SWITCH TO COUNTDOWN AFTER 3 SECONDS
-            setTimeout(() => {
-                // Fade out proposal
-                proposalPopup.classList.remove('active');
+            mailbox.addEventListener('click', () => {
+                // Hide the bunny to focus on popup
+                gsap.to(bunnyContainer, { opacity: 0, duration: 0.5 });
                 
-                // Wait small moment, fade in countdown
+                // Show proposal popup
+                proposalPopup.classList.add('active');
+                
+                // First burst of small confetti (HEARTS!)
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ec4899', '#a855f7', '#ef4444', '#ffffff'], // Pink, Purple, Red, White
+                    shapes: [heart],
+                    scalar: 2 // Make hearts a bit bigger
+                });
+            });
+
+            // 4. ACCEPT PROPOSAL FUNCTION
+            window.acceptProposal = function() {
+                // Massive confetti explosion
+                const duration = 15 * 1000;
+                const animationEnd = Date.now() + duration;
+                // Added colors to defaults
+                const defaults = { 
+                    startVelocity: 30, 
+                    spread: 360, 
+                    ticks: 60, 
+                    zIndex: 200, 
+                    shapes: [heart], 
+                    scalar: 2,
+                    colors: ['#ec4899', '#a855f7', '#ef4444', '#ffffff'] // Pink, Purple, Red, White
+                };
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                const interval = setInterval(function() {
+                    const timeLeft = animationEnd - Date.now();
+                    if (timeLeft <= 0) return clearInterval(interval);
+                    const particleCount = 50 * (timeLeft / duration);
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                    confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+                }, 250);
+
+                // Change button text
+                const btns = document.querySelectorAll('button');
+                btns[0].textContent = "YAY!!! I LOVE YOU! ❤️";
+                btns[0].classList.replace('bg-pink-500', 'bg-green-500');
+                btns[1].style.display = 'none';
+
+                // 5. SWITCH TO COUNTDOWN AFTER 3 SECONDS
                 setTimeout(() => {
-                    startCountdown();
-                    countdownPopup.classList.add('active');
-                    // More confetti because why not
-                    confetti({ particleCount: 100, spread: 100, origin: { y: 0.6 } });
-                }, 500);
-            }, 3000);
-        }
+                    // Fade out proposal
+                    proposalPopup.classList.remove('active');
+                    
+                    // Wait small moment, fade in countdown
+                    setTimeout(() => {
+                        startCountdown();
+                        countdownPopup.classList.add('active');
+                        // More confetti because why not
+                        confetti({ 
+                            particleCount: 100, 
+                            spread: 100, 
+                            origin: { y: 0.6 },
+                            shapes: [heart],
+                            scalar: 2,
+                            colors: ['#ec4899', '#a855f7', '#ef4444', '#ffffff'] // Pink, Purple, Red, White
+                        });
+                    }, 500);
+                }, 3000);
+            }
+        });
 
         // 6. COUNTDOWN LOGIC
         function startCountdown() {
