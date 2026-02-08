@@ -346,10 +346,16 @@
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-300 to-red-400"></div>
             
             <h2 class="text-3xl font-black text-pink-600 mb-2">My Dearest Bunny,</h2>
-            <p class="text-gray-600 mb-8 mt-4 text-lg">
-                I have one important question...
+            <p class="text-gray-600 mb-6 mt-4 text-lg">
+                I have one very important question...
             </p>
             
+            <!-- NEW: Image Section for Popup (User can replace src) -->
+            <div class="flex justify-center mb-6">
+                <!-- Replace 'proposal_pic.png' with your 320x320 png -->
+                <img src="bebe.png" alt="Us" class="w-full h-auto object-cover rounded-2xl shadow-md border-4 border-pink-50">
+            </div>
+
             <div class="text-2xl font-bold text-gray-800 mb-8 leading-tight">
                 Will you be my Valentine?
             </div>
@@ -358,8 +364,8 @@
                 <button onclick="acceptProposal()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95 text-xl">
                     YES! 🐰❤️
                 </button>
-                <button onclick="acceptProposal()" class="w-full bg-pink-100 hover:bg-pink-200 text-pink-600 font-bold py-3 rounded-xl transform transition active:scale-95">
-                    Of course!
+                <button onclick="rejectProposal(this)" class="w-full bg-pink-100 hover:bg-pink-200 text-pink-600 font-bold py-3 rounded-xl">
+                    No 😢
                 </button>
             </div>
         </div>
@@ -396,7 +402,7 @@
             </div>
 
             <div class="text-pink-400 text-sm font-bold">
-                Feb 14th ❤️
+                I love you so much Kylie ❤️
             </div>
         </div>
     </div>
@@ -455,7 +461,25 @@
                 });
             });
 
-            // 4. ACCEPT PROPOSAL FUNCTION
+            // 4. REJECT PROPOSAL LOGIC
+            let rejectCount = 0;
+            window.rejectProposal = function(btn) {
+                rejectCount++;
+                // Scale down by 0.2 each time
+                const currentScale = 1 - (rejectCount * 0.2);
+                
+                if (rejectCount >= 5) {
+                    // Completely disappear on 5th click
+                    gsap.to(btn, { opacity: 0, scale: 0, duration: 0.5, onComplete: () => {
+                        btn.style.display = 'none';
+                    }});
+                } else {
+                    // Just shrink
+                    gsap.to(btn, { scale: currentScale, duration: 0.2 });
+                }
+            }
+
+            // 5. ACCEPT PROPOSAL FUNCTION
             window.acceptProposal = function() {
                 // Massive confetti explosion
                 const duration = 15 * 1000;
@@ -487,9 +511,11 @@
                 const btns = document.querySelectorAll('button');
                 btns[0].textContent = "YAY!!! I LOVE YOU! ❤️";
                 btns[0].classList.replace('bg-pink-500', 'bg-green-500');
-                btns[1].style.display = 'none';
+                
+                // If the second button still exists, hide it now
+                if(btns[1]) btns[1].style.display = 'none';
 
-                // 5. SWITCH TO COUNTDOWN AFTER 3 SECONDS
+                // 6. SWITCH TO COUNTDOWN AFTER 3 SECONDS
                 setTimeout(() => {
                     // Fade out proposal
                     proposalPopup.classList.remove('active');
@@ -512,7 +538,7 @@
             }
         });
 
-        // 6. COUNTDOWN LOGIC
+        // 7. COUNTDOWN LOGIC
         function startCountdown() {
             function updateTimer() {
                 const now = new Date();
