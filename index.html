@@ -213,7 +213,6 @@
     </div>
 
     <!-- MAIN SCROLL CONTENT -->
-    <!-- Changed pb-96 to pb-10 to reduce bottom scroll space -->
     <main class="relative z-10 pb-10">
         
         <!-- WINDING DIRT PATH SVG -->
@@ -255,7 +254,11 @@
                 
                 <!-- CUSTOMIZATION: Add your image URL in the src below -->
                 <div class="photo-frame mb-4">
-                     <!-- Example using a placeholder service. Replace src with your image file path -->
+                     <!-- 
+                        TO ADD YOUR IMAGE:
+                        1. Save your image in the folder (e.g. date.jpg)
+                        2. Change src="..." to src="date.jpg"
+                     -->
                     <img src="https://placehold.co/400x300/pink/white?text=Our+First+Date" alt="Memory 1">
                 </div>
 
@@ -265,26 +268,47 @@
             </div>
         </div>
 
-        <!-- SECTION 3: REASON WHY (Text only) -->
+        <!-- SECTION 3: REASON WHY (CONVERTED TO PHOTO CARD) -->
         <div class="h-screen flex items-center justify-center px-6 section">
-            <div class="card p-8 w-full max-w-sm text-center fade-in-up">
-                <div class="text-4xl mb-4">✨</div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">You make life better.</h2>
-                <p class="text-gray-600">
+            <div class="card p-6 w-full max-w-sm fade-in-up">
+                <!-- CUSTOMIZATION: Change this text -->
+                <p class="text-pink-500 font-bold mb-3">You make life better...</p>
+                
+                <!-- CUSTOMIZATION: Add your image URL in the src below -->
+                <div class="photo-frame mb-4">
+                     <!-- 
+                        TO ADD YOUR IMAGE:
+                        1. Save your image in the folder (e.g. smile.jpg)
+                        2. Change src="..." to src="smile.jpg"
+                     -->
+                    <img src="https://placehold.co/400x300/pink/white?text=Your+Smile" alt="Reason Why">
+                </div>
+
+                <p class="text-gray-600 text-sm">
                     Your smile is my favorite thing in the world. Being your "bunny" makes me the happiest person alive.
                 </p>
             </div>
         </div>
 
-        <!-- SECTION 4: MEMORY 2 -->
+        <!-- SECTION 4: MEMORY 2 (VIDEO EXAMPLE) -->
         <div class="h-screen flex items-center justify-center px-6 section">
             <div class="card p-6 w-full max-w-sm fade-in-up">
                  <!-- CUSTOMIZATION: Change this text -->
                 <p class="text-pink-500 font-bold mb-3">And that time when...</p>
                 
-                 <!-- CUSTOMIZATION: Add your image URL in the src below -->
+                 <!-- CUSTOMIZATION: Video Implementation -->
                 <div class="photo-frame mb-4">
-                    <img src="https://placehold.co/400x300/pink/white?text=Funny+Moment" alt="Memory 2">
+                    <!-- 
+                        TO ADD YOUR VIDEO:
+                        1. Save video to folder (e.g. video.mp4)
+                        2. Change src to "video.mp4"
+                        3. KEEP: autoplay, loop, muted, playsinline
+                     -->
+                    <video autoplay loop muted playsinline class="w-full h-full object-cover">
+                        <!-- Replace the link below with your video file name -->
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
 
                 <p class="text-gray-600 text-sm">
@@ -299,7 +323,6 @@
             <!-- The "House" / Goal -->
             <div id="mailbox-trigger" class="cursor-pointer transform transition-transform hover:scale-105 active:scale-95 mb-8 fade-in-up w-full">
                 <!-- Replaced SVG with your image -->
-                <!-- REMOVED max-w constraints and added min-w to force size -->
                 <img src="bunnyhearthouse.png" alt="Bunny Heart House" class="w-full h-auto mx-auto drop-shadow-2xl min-w-[300px]">
                 
                 <div class="text-center mt-4 bg-white px-4 py-2 rounded-full shadow-lg tap-hint w-max mx-auto">
